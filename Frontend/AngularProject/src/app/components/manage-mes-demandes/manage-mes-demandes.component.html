@@ -1,0 +1,55 @@
+<div class="container">
+  <h2 class="title">Demander une absence</h2>
+  
+  <div class="info-block" *ngIf="currentUser">
+    <p><strong>Solde de congés restant:</strong> {{ currentUser.user.solde }} jours</p>
+  </div>
+  
+  <form [formGroup]="demandeForm" (ngSubmit)="onSubmit()" class="form">
+    <select formControlName="type">
+      <option value="" disabled selected>-- Type d'absence --</option>
+      <option value="congé">Congé</option>
+      <option value="maladie">Maladie</option>
+    </select>
+
+    <div class="form-group">
+      <label>Nombre de jours:</label>
+      <input type="number" formControlName="jours" min="1" />
+      <div class="error" *ngIf="demandeForm.get('jours')?.hasError('insufficientBalance')">
+        Solde insuffisant pour cette demande de congé.
+      </div>
+    </div>
+
+    <textarea formControlName="motif" placeholder="Motif de l'absence" rows="3"></textarea>
+
+    <div class="form-actions">
+      <button class="btn primary" type="submit" [disabled]="demandeForm.invalid">Soumettre</button>
+    </div>
+  </form>
+
+  <h3 class="title">Mes demandes d'absence</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Jours</th>
+        <th>Motif</th>
+        <th>Statut</th>
+        <th>Date de demande</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of demandes">
+        <td>{{ d.type }}</td>
+        <td>{{ d.jours }}</td>
+        <td>{{ d.motif }}</td>
+        <td [ngClass]="d.statut">{{ d.statut }}</td>
+        <td>{{ d.createdAt | date: 'dd/MM/yyyy' }}</td>
+        <td>
+          <button class="btn small delete" *ngIf="d.statut === 'en_attente'" (click)="delete(d._id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

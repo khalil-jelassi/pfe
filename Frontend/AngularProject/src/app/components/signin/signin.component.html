@@ -1,0 +1,46 @@
+<!-- src/app/components/signin/signin.component.html -->
+<div class="auth-container">
+    <div class="auth-card">
+      <h2>Sign In</h2>
+      
+      <form [formGroup]="signinForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input 
+            type="text" 
+            id="username" 
+            formControlName="username" 
+            class="form-control"
+            [ngClass]="{'invalid': isSubmitted && formControls['username'].errors}"
+          >
+          <div *ngIf="isSubmitted && formControls['username'].errors" class="error-message">
+            <span *ngIf="formControls['username'].errors['required']">Username is required</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            class="form-control"
+            [ngClass]="{'invalid': isSubmitted && formControls['password'].errors}"
+          >
+          <div *ngIf="isSubmitted && formControls['password'].errors" class="error-message">
+            <span *ngIf="formControls['password'].errors['required']">Password is required</span>
+          </div>
+        </div>
+        
+        <div *ngIf="errorMessage" class="alert-error">
+          {{ errorMessage }}
+        </div>
+        
+        <button type="submit" class="btn-primary">Sign In</button>
+        
+        <div class="auth-link">
+          Don't have an account? <a routerLink="/signup">Sign Up</a>
+        </div>
+      </form>
+    </div>
+  </div>

@@ -1,0 +1,56 @@
+<div class="container">
+    <h2 class="title">{{ isEditing ? 'Modifier une absence' : 'Ajouter une absence' }}</h2>
+  
+    <form [formGroup]="absenceForm" (ngSubmit)="onSubmit()" class="form">
+      <select formControlName="employeId">
+        <option value="" disabled selected>-- Sélectionnez un employé --</option>
+        <option *ngFor="let emp of employes" [value]="emp._id">{{ emp.username }}</option>
+      </select>
+  
+      <select formControlName="type">
+        <option value="" disabled selected>-- Type d'absence --</option>
+        <option value="congé">Congé</option>
+        <option value="maladie">Maladie</option>
+      </select>
+  
+      <input type="number" formControlName="jours" placeholder="Nombre de jours" min="1" />
+  
+      <div class="form-actions">
+        <button class="btn primary" type="submit" [disabled]="absenceForm.invalid">
+          {{ isEditing ? 'Mettre à jour' : 'Ajouter' }}
+        </button>
+        <button class="btn secondary" type="button" (click)="resetForm()">Annuler</button>
+      </div>
+    </form>
+  
+    <h3 class="title">Liste des absences</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Employé</th>
+          <th>Type</th>
+          <th>Jours</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of absences">
+          <td>{{ a.employe?.username }}</td>
+          <td>{{ a.type }}</td>
+          <td>{{ a.jours }}</td>
+          <td>
+            <button class="btn small edit" (click)="edit(a)">Modifier</button>
+            <button class="btn small delete" (click)="delete(a._id)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <h3 class="title">Totaux des absence par employé</h3>
+    <div class="cards-container">
+      <div class="card" *ngFor="let emp of employes">
+        <h4>{{ emp.username }}</h4>
+        <p>Total jours d'absence : <strong>{{ getTotalAbsencesFor(emp._id) }}</strong></p>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,31 @@
+<div class="container">
+    <h2 class="title">Demandes d'absence des employés</h2>
+  
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Employé</th>
+          <th>Type</th>
+          <th>Jours</th>
+          <th>Statut</th>
+          <th>Date</th>
+          <th *ngIf="user?.role === 'manager'">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of demandes">
+          <td>{{ d.employe?.username }}</td>
+          <td>{{ d.type }}</td>
+          <td>{{ d.jours }}</td>
+          <td [ngClass]="d.statut">{{ d.statut }}</td>
+          <td>{{ d.createdAt | date: 'short' }}</td>
+          <td *ngIf="user?.role === 'manager'">
+            <button class="btn small accept" *ngIf="d.statut === 'en_attente'" (click)="traiter(d._id, 'accepter')">Accepter</button>
+            &nbsp;&nbsp;
+            <button class="btn small refuse" *ngIf="d.statut === 'en_attente'" (click)="traiter(d._id, 'refuser')">Refuser</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

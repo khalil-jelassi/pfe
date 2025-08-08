@@ -1,0 +1,64 @@
+<!-- src/app/components/signup/signup.component.html -->
+<div class="auth-container">
+    <div class="auth-card">
+      <h2>Create an Account</h2>
+      
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input 
+            type="text" 
+            id="username" 
+            formControlName="username" 
+            class="form-control"
+            [ngClass]="{'invalid': isSubmitted && formControls['username'].errors}"
+          >
+          <div *ngIf="isSubmitted && formControls['username'].errors" class="error-message">
+            <span *ngIf="formControls['username'].errors['required']">Username is required</span>
+            <span *ngIf="formControls['username'].errors['minlength']">Username must be at least 3 characters</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-control"
+            [ngClass]="{'invalid': isSubmitted && formControls['email'].errors}"
+          >
+          <div *ngIf="isSubmitted && formControls['email'].errors" class="error-message">
+            <span *ngIf="formControls['email'].errors['required']">Email is required</span>
+            <span *ngIf="formControls['email'].errors['email']">Please enter a valid email</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            class="form-control"
+            [ngClass]="{'invalid': isSubmitted && formControls['password'].errors}"
+          >
+          <div *ngIf="isSubmitted && formControls['password'].errors" class="error-message">
+            <span *ngIf="formControls['password'].errors['required']">Password is required</span>
+            <span *ngIf="formControls['password'].errors['minlength']">Password must be at least 6 characters</span>
+          </div>
+        </div>
+    
+        
+        <div *ngIf="errorMessage" class="alert-error">
+          {{ errorMessage }}
+        </div>
+        
+        <button type="submit" class="btn-primary">Sign Up</button>
+        
+        <div class="auth-link">
+          Already have an account? <a routerLink="/signin">Sign In</a>
+        </div>
+      </form>
+    </div>
+  </div>

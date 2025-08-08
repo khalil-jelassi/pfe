@@ -1,0 +1,85 @@
+<div class="container">
+  <h2 class="title">{{ isEditing ? 'Modifier un employé' : 'Ajouter un employé' }}</h2>
+  <form [formGroup]="employeForm" (ngSubmit)="onSubmit()" class="form">
+    <!-- Username -->
+    <input formControlName="username" placeholder="Nom d'utilisateur" required />
+    <div class="error" *ngIf="employeForm.get('username')?.hasError('required') && employeForm.get('username')?.touched">
+      Le nom d'utilisateur est requis.
+    </div>
+    <div class="error" *ngIf="employeForm.get('username')?.hasError('usernameTaken')">
+      Ce nom d'utilisateur existe déjà.
+    </div>
+
+    <!-- Email -->
+    <input formControlName="email" type="email" placeholder="Email" required />
+    <div class="error" *ngIf="employeForm.get('email')?.hasError('required') && employeForm.get('email')?.touched">
+      L'email est requis.
+    </div>
+    <div class="error" *ngIf="employeForm.get('email')?.hasError('email') && employeForm.get('email')?.touched">
+      Format d'email invalide.
+    </div>
+
+    <!-- Department -->
+    <select formControlName="departement" required>
+      <option value="" disabled selected>-- Sélectionnez un département --</option>
+      <option value="Info">Info</option>
+      <option value="RH">RH</option>
+    </select>
+    <div class="error" *ngIf="employeForm.get('departement')?.hasError('required') && employeForm.get('departement')?.touched">
+      Le département est requis.
+    </div>
+
+    <!-- Solde -->
+    <div class="form-control">
+      <label for="solde">Solde de congés:</label>
+      <input id="solde" type="number" formControlName="solde" min="0" max="30" />
+      <div class="error" *ngIf="employeForm.get('solde')?.hasError('min')">
+        Le solde ne peut pas être négatif.
+      </div>
+      <div class="error" *ngIf="employeForm.get('solde')?.hasError('max')">
+        Le solde maximum est de 30 jours.
+      </div>
+    </div>
+
+    <!-- Password -->
+    <input formControlName="password" type="password" placeholder="Mot de passe" [required]="!isEditing" />
+    <div class="error" *ngIf="!isEditing && employeForm.get('password')?.hasError('required')">
+      Le mot de passe est requis.
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn primary" [disabled]="employeForm.invalid">
+        {{ isEditing ? 'Mettre à jour' : 'Créer' }}
+      </button>
+      <button type="button" class="btn secondary" (click)="resetForm()">Annuler</button>
+    </div>
+  </form>
+
+  <h3 class="title">Liste des employés</h3>
+  <table class="table" *ngIf="employes.length > 0; else noEmployes">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Email</th>
+        <th>Département</th>
+        <th>Solde congés</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let emp of employes">
+        <td>{{ emp.username }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.departement }}</td>
+        <td>{{ emp.solde }} jours</td>
+        <td>
+          <button class="btn small edit" (click)="edit(emp)">Modifier</button>
+          <button class="btn small delete" (click)="delete(emp._id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #noEmployes>
+    <p style="text-align: center; margin-top: 1rem;">Aucun employé pour le moment.</p>
+  </ng-template>
+</div>

@@ -1,0 +1,59 @@
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th, .table td {
+    padding: 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .acceptée {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .refusée {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .en\ attente {
+    color: orange;
+    font-weight: bold;
+  }
+  
+  .btn {
+    padding: 0.3rem 0.8rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .accept {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .refuse {
+    background-color: #dc3545;
+    color: white;
+  }
+  

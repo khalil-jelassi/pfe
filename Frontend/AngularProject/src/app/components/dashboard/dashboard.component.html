@@ -1,0 +1,222 @@
+<!-- dashboard.component.html -->
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <button class="refresh-btn" (click)="refreshData()" title="Refresh data">
+      <i class="fas fa-sync-alt"></i> Refresh
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading user data...
+  </div>
+
+  <div *ngIf="!loading && currentUser" class="user-card">
+    <div class="user-header">
+      <div class="avatar">{{ currentUser.username.charAt(0).toUpperCase() }}</div>
+      <div class="user-role" [ngClass]="currentUser.role.toLowerCase()">
+        {{ currentUser.role }}
+      </div>
+    </div>
+    
+    <div class="user-details">
+      <div class="detail-item">
+        <div class="detail-label">Username</div>
+        <div class="detail-value">{{ currentUser.username }}</div>
+      </div>
+      
+      <div class="detail-item"  *ngIf="user?.role === 'employé'">
+        <div class="detail-label">Département</div>
+        <div class="detail-value">{{ currentUser.departement }}</div>
+      </div>
+      
+      <div class="detail-item">
+        <div class="detail-label">Email</div>
+        <div class="detail-value">{{ currentUser.email }}</div>
+      </div>
+      
+      <div class="detail-item">
+        <div class="detail-label">Account Created</div>
+        <div class="detail-value">{{ currentUser.createdAt | date:'medium' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !currentUser" class="error-message">
+    <p>Unable to load user data. Please try again later.</p>
+  </div>
+
+  <!-- Employee Dashboard Section -->
+  <div class="dashboard-section" *ngIf="user?.role === 'employé'">
+    <h2>Tableau de bord de l'employé</h2>
+    
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Chargement des données...</p>
+    </div>
+    
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+      <button (click)="loadEmployeeData()">Réessayer</button>
+    </div>
+    
+    <div *ngIf="!isLoading && !error" class="charts-container">
+      <div class="chart-card">
+        <h3>Mes absences</h3>
+        <div class="chart-wrapper">
+          <canvas id="absenceChart"></canvas>
+        </div>
+        <div class="stats">
+          <p>Total des absences: {{ absences.length }}</p>
+          <div *ngIf="absences.length === 0" class="no-data">
+            Aucune absence enregistrée.
+          </div>
+        </div>
+      </div>
+      
+      <div class="chart-card">
+        <h3>Mes rapports d'évaluation</h3>
+        <div class="chart-wrapper">
+          <canvas id="rapportChart"></canvas>
+        </div>
+        <div class="stats">
+          <p>Total des rapports: {{ rapports.length }}</p>
+          <div *ngIf="rapports.length === 0" class="no-data">
+            Aucun rapport enregistré.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Section -->
+  <div class="dashboard-section" *ngIf="user?.role === 'Admin_RH' || user?.role === 'manager'">
+    <h2>Tableau de bord d'administration</h2>
+    
+    <div *ngIf="adminIsLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Chargement des données d'administration...</p>
+    </div>
+    
+    <div *ngIf="adminError" class="error-message">
+      <p>{{ adminError }}</p>
+      <button (click)="loadAdminData()">Réessayer</button>
+    </div>
+    
+    <div *ngIf="!adminIsLoading && !adminError">
+      <!-- Admin Stats Cards -->
+      <div class="admin-stats-container">
+        <div class="stat-card">
+          <div class="stat-icon employees-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ adminStats.totalEmployes }}</div>
+            <div class="stat-label">Employés</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon reports-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ adminStats.totalRapports }}</div>
+            <div class="stat-label">Rapports</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon absences-icon">
+            <i class="fas fa-calendar-minus"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ adminStats.totalAbsences }}</div>
+            <div class="stat-label">Absences</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon requests-icon">
+            <i class="fas fa-clipboard-list"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ adminStats.totalDemandes }}</div>
+            <div class="stat-label">Demandes</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Admin Charts -->
+      <div class="charts-container admin-charts">
+        <div class="chart-card">
+          <h3>Répartition des employés</h3>
+          <div class="chart-wrapper">
+            <canvas id="employesChart"></canvas>
+          </div>
+          <div class="stats">
+            <p>Total des employés: {{ adminStats.totalEmployes }}</p>
+            <div *ngIf="allEmployes.length === 0" class="no-data">
+              Aucun employé enregistré.
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3>Répartition des absences</h3>
+          <div class="chart-wrapper">
+            <canvas id="allAbsencesChart"></canvas>
+          </div>
+          <div class="stats">
+            <p>Total des absences: {{ adminStats.totalAbsences }}</p>
+            <div *ngIf="allAbsences.length === 0" class="no-data">
+              Aucune absence enregistrée.
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3>Répartition des rapports</h3>
+          <div class="chart-wrapper">
+            <canvas id="allRapportsChart"></canvas>
+          </div>
+          <div class="stats">
+            <p>Total des rapports: {{ adminStats.totalRapports }}</p>
+            <div *ngIf="allRapports.length === 0" class="no-data">
+              Aucun rapport enregistré.
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h3>Demandes d'absence</h3>
+          <div class="chart-wrapper">
+            <canvas id="demandesChart"></canvas>
+          </div>
+          <div class="stats">
+            <div class="status-stats">
+              <div class="status-item pending">
+                <span class="status-dot"></span>
+                <span class="status-label">En attente:</span>
+                <span class="status-value">{{ adminStats.pendingDemandes }}</span>
+              </div>
+              <div class="status-item approved">
+                <span class="status-dot"></span>
+                <span class="status-label">Acceptées:</span>
+                <span class="status-value">{{ adminStats.approvedDemandes }}</span>
+              </div>
+              <div class="status-item rejected">
+                <span class="status-dot"></span>
+                <span class="status-label">Refusées:</span>
+                <span class="status-value">{{ adminStats.rejectedDemandes }}</span>
+              </div>
+            </div>
+            <div *ngIf="allDemandes.length === 0" class="no-data">
+              Aucune demande enregistrée.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
